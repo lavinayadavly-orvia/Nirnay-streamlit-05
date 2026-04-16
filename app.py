@@ -323,6 +323,7 @@ if _active_tab_idx > 0:
 # TAB 1 — ANONYMISATION (Protected View)
 # ═══════════════════════════════════════════════════════════════════════════════
 with t_anon:
+    render_banner("Protected View", "PII/PHI detection and anonymisation · Two-step DPDP Act 2023 process · Full audit log")
     st.markdown("""
 <div class="sec-hd">
   <div class="sec-ic ic-blue" style="font-size:14px;font-weight:700;color:#1e40af;">01</div>
@@ -423,6 +424,7 @@ with t_anon:
 # TAB 2 — SUMMARISATION
 # ═══════════════════════════════════════════════════════════════════════════════
 with t_sum:
+    render_banner("Summarisation", "Structured summaries for SAE narratives · SUGAM checklists · Meeting transcripts")
     st.markdown("""
 <div class="sec-hd">
   <div class="sec-ic ic-teal">📄</div>
@@ -538,6 +540,7 @@ with t_sum:
 # TAB 3 — COMPLETENESS
 # ═══════════════════════════════════════════════════════════════════════════════
 with t_comp:
+    render_banner("Completeness Check", "NDCT Rules 2019 / Form CT mandatory field assessment · RAG status · Approve / Return / Reject")
     st.markdown("""
 <div class="sec-hd">
   <div class="sec-ic ic-purple">✅</div>
@@ -628,6 +631,7 @@ with t_comp:
 # TAB 4 — CLASSIFICATION
 # ═══════════════════════════════════════════════════════════════════════════════
 with t_cls:
+    render_banner("Classification", "SAE severity grading · ICD-10 mapping · Session-based duplicate detection")
     st.markdown("""
 <div class="sec-hd">
   <div class="sec-ic ic-amber">🏷️</div>
@@ -720,6 +724,7 @@ Files are cleared on browser refresh — DPDP compliant (no external storage).</
 # TAB 5 — COMPARISON
 # ═══════════════════════════════════════════════════════════════════════════════
 with t_cmp:
+    render_banner("Version Compare", "Semantic document diff · Substantive vs administrative change flagging · Downloadable report")
     st.markdown("""
 <div class="sec-hd">
   <div class="sec-ic ic-sky">🔍</div>
