@@ -53,7 +53,7 @@ section[data-testid="stSidebar"] .stMarkdown p{color:rgba(255,255,255,0.8)!impor
 section[data-testid="stSidebar"] .stSelectbox>div>div{background:rgba(255,255,255,0.1)!important;border:1px solid rgba(255,255,255,0.25)!important;border-radius:8px!important;}
 
 .hero{background:linear-gradient(135deg,#001f5b 0%,#003087 55%,#0052cc 100%);border-radius:16px;padding:28px 36px;margin-bottom:18px;box-shadow:0 4px 24px rgba(0,48,135,0.18);}
-.hero h1{color:white;font-size:22px;font-weight:700;margin:0;}
+.hero h1{color:white;font-size:28px;font-weight:800;margin:0;}
 .hero .sub{color:rgba(255,255,255,0.68);font-size:13px;margin:5px 0 0;}
 .hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
 .hbadge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:20px;padding:4px 12px;font-size:11px;color:rgba(255,255,255,0.9);font-weight:500;}
@@ -319,7 +319,7 @@ def generate_audit_packet() -> dict:
 def render_banner(title: str, subtitle: str) -> None:
     st.markdown(f"""
 <div class="hero">
-  <p style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.04em;opacity:0.82;">{DEMO_MODE_LABEL}</p>
+  <p style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.04em;color:rgba(255,255,255,0.82);">{DEMO_MODE_LABEL}</p>
   <h1>{title}</h1>
   <p class="sub">{subtitle}</p>
   <div class="hero-badges">
@@ -328,7 +328,7 @@ def render_banner(title: str, subtitle: str) -> None:
     <span class="hbadge g">✓ ICMR GCP</span>
     <span class="hbadge g">✓ MeitY AI Ethics</span>
   </div>
-  <p style="margin-top:0.8rem;font-size:0.85rem;opacity:0.88;">{APP_DISCLAIMER}</p>
+  <p style="margin-top:0.8rem;font-size:0.85rem;color:rgba(255,255,255,0.88);">{APP_DISCLAIMER}</p>
 </div>
 """, unsafe_allow_html=True)
 
