@@ -67,9 +67,9 @@ from components import (
     to_csv_bytes,
     to_json_bytes,
     validate_redaction,
-    CHIP_MAP,
 )
 from engine import (
+    CHIP_MAP,
     assess_completeness,
     classify_sae,
     claude_summarise,
