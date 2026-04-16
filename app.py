@@ -101,104 +101,92 @@ VALID_PASS = "nirnay2026"
 # LOGIN PAGE
 # ═══════════════════════════════════════════════════════════════════════════════
 if not st.session_state["logged_in"]:
+    # Hide sidebar on login page
     st.markdown("""
 <style>
-.stApp { background: #f0f3f8 !important; }
+section[data-testid="stSidebar"]{display:none;}
+.stApp{background:#f0f3f8!important;}
 </style>
-<div style="max-width:960px;margin:48px auto 0;display:flex;gap:0;border-radius:16px;overflow:hidden;border:0.5px solid #e2e8f0;box-shadow:0 8px 32px rgba(0,48,135,0.10);">
-
-  <!-- LEFT — branding + feature cards -->
-  <div style="flex:1.1;background:#0a2240;padding:40px 36px;display:flex;flex-direction:column;gap:0;">
-
-    <!-- Brand -->
-    <div style="margin-bottom:6px;display:flex;align-items:center;gap:10px;">
-      <div style="width:30px;height:30px;border-radius:8px;background:#FF9933;display:flex;align-items:center;justify-content:center;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" stroke-width="2.2" stroke-linejoin="round"/></svg>
-      </div>
-      <span style="font-size:20px;font-weight:800;color:white;letter-spacing:-0.5px;">Nirnay</span>
-      <span style="font-size:10px;color:rgba(255,255,255,0.35);border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;padding:2px 10px;letter-spacing:.04em;">AI Review System</span>
-    </div>
-
-    <!-- Tagline -->
-    <div style="margin-bottom:28px;">
-      <div style="font-size:22px;font-weight:700;color:white;line-height:1.3;margin-bottom:6px;">Regulatory review,<br><span style="color:#FF9933;">reimagined for India.</span></div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">All 6 CDSCO-mandated AI features. Upload real documents and get structured regulatory outputs in seconds.</div>
-    </div>
-
-    <!-- Feature cards — 2 col grid -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#0052cc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">01 · Privacy</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Anonymisation</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">DPDP Act 2023 compliant PII removal</div>
-      </div>
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#0f766e;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">02 · Intelligence</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Summarisation</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">SAE reports, checklists, meeting audio</div>
-      </div>
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#6d28d9;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">03 · Validation</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Completeness</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">Mandatory field verification, flagging</div>
-      </div>
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#b45309;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">04 · Triage</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Classification</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">SAE severity scoring + duplicate detection</div>
-      </div>
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#0369a1;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">05 · Diff Engine</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Comparison</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">Semantic + structural dossier diff</div>
-      </div>
-
-      <div style="background:white;border-radius:10px;padding:14px 16px;border:0.5px solid #e2e8f0;">
-        <div style="font-size:9px;font-weight:700;color:#be185d;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;">06 · Generation</div>
-        <div style="font-size:13px;font-weight:600;color:#0a2240;margin-bottom:3px;">Inspection Report</div>
-        <div style="font-size:11px;color:#64748b;line-height:1.4;">Typed / handwritten / audio → GCP report</div>
-      </div>
-
-    </div>
-
-    <!-- Compliance badges -->
-    <div style="display:flex;gap:7px;flex-wrap:wrap;">
-      <span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:20px;padding:3px 10px;">✓ DPDP Act 2023</span>
-      <span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:20px;padding:3px 10px;">✓ NDCT Rules 2019</span>
-      <span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:20px;padding:3px 10px;">✓ ICMR GCP</span>
-      <span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:20px;padding:3px 10px;">✓ MeitY AI Ethics</span>
-    </div>
-
-  </div>
-
-  <!-- RIGHT — login form -->
-  <div style="flex:0.75;background:white;padding:48px 36px;display:flex;flex-direction:column;justify-content:center;">
-    <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Authorised access only</div>
-    <div style="font-size:22px;font-weight:700;color:#0a2240;margin-bottom:28px;">Sign in</div>
 """, unsafe_allow_html=True)
 
-    _uname = st.text_input("Username", placeholder="Enter username", key="login_uname")
-    _pwd   = st.text_input("Password", placeholder="Enter password", type="password", key="login_pwd")
+    _lcol, _rcol = st.columns([1.3, 1], gap="small")
 
-    if st.session_state["_login_failed"]:
-        st.markdown('<p style="color:#dc2626;font-size:12px;margin:0 0 8px;">⚠ Invalid credentials. Try again.</p>', unsafe_allow_html=True)
-
-    _do_login = st.button("Sign in →", key="login_btn", use_container_width=True, type="primary")
-
-    st.markdown("""
-    <div style="background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-top:12px;text-align:center;">
-      <div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Demo credentials</div>
-      <div style="font-size:12px;color:#0a2240;">Username: <b>admin</b> &nbsp;·&nbsp; Password: <b>nirnay2026</b></div>
+    # ── LEFT — branding + feature cards ──────────────────────────────────────
+    with _lcol:
+        _cv1.html("""
+<style>
+body{margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+.wrap{background:#0a2240;border-radius:16px 0 0 16px;padding:40px 36px;min-height:580px;display:flex;flex-direction:column;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.shield{width:30px;height:30px;border-radius:8px;background:#FF9933;display:flex;align-items:center;justify-content:center;}
+.brand-name{font-size:20px;font-weight:800;color:white;letter-spacing:-0.5px;}
+.brand-tag{font-size:9px;color:rgba(255,255,255,0.4);border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;padding:2px 10px;}
+.tagline{margin:16px 0 24px;}
+.tagline h2{font-size:22px;font-weight:700;color:white;line-height:1.3;margin:0 0 6px;}
+.tagline h2 span{color:#FF9933;}
+.tagline p{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6;margin:0;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:24px;}
+.card{background:white;border-radius:10px;padding:13px 14px;}
+.cat{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.title{font-size:13px;font-weight:600;color:#0a2240;margin-bottom:2px;}
+.desc{font-size:10px;color:#64748b;line-height:1.4;}
+.badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:8px;}
+.badge{font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:20px;padding:3px 9px;}
+</style>
+<div class="wrap">
+  <div class="brand">
+    <div class="shield">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="white" stroke-width="2.2" stroke-linejoin="round"/></svg>
     </div>
-    <div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:14px;line-height:1.5;">
-      Authorised CDSCO personnel only.<br>All sessions are logged for compliance.
-    </div>
+    <span class="brand-name">Nirnay</span>
+    <span class="brand-tag">AI Review System</span>
   </div>
+  <div class="tagline">
+    <h2>Regulatory review,<br><span>reimagined for India.</span></h2>
+    <p>All 6 CDSCO-mandated AI features. Upload real documents and get structured regulatory outputs in seconds.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="cat" style="color:#0052cc;">01 · Privacy</div><div class="title">Anonymisation</div><div class="desc">DPDP Act 2023 compliant PII removal</div></div>
+    <div class="card"><div class="cat" style="color:#0f766e;">02 · Intelligence</div><div class="title">Summarisation</div><div class="desc">SAE reports, checklists, meeting audio</div></div>
+    <div class="card"><div class="cat" style="color:#6d28d9;">03 · Validation</div><div class="title">Completeness</div><div class="desc">Mandatory field verification, flagging</div></div>
+    <div class="card"><div class="cat" style="color:#b45309;">04 · Triage</div><div class="title">Classification</div><div class="desc">SAE severity scoring + duplicate detection</div></div>
+    <div class="card"><div class="cat" style="color:#0369a1;">05 · Diff Engine</div><div class="title">Comparison</div><div class="desc">Semantic + structural dossier diff</div></div>
+    <div class="card"><div class="cat" style="color:#be185d;">06 · Generation</div><div class="title">Inspection Report</div><div class="desc">Typed / handwritten / audio → GCP report</div></div>
+  </div>
+  <div class="badges">
+    <span class="badge">✓ DPDP Act 2023</span>
+    <span class="badge">✓ NDCT Rules 2019</span>
+    <span class="badge">✓ ICMR GCP</span>
+    <span class="badge">✓ MeitY AI Ethics</span>
+  </div>
+</div>
+""", height=600)
+
+    # ── RIGHT — login form ────────────────────────────────────────────────────
+    with _rcol:
+        st.markdown("""
+<div style="background:white;border-radius:0 16px 16px 0;padding:48px 36px 32px;min-height:580px;border:0.5px solid #e2e8f0;border-left:none;display:flex;flex-direction:column;justify-content:center;">
+  <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Authorised access only</div>
+  <div style="font-size:22px;font-weight:700;color:#0a2240;margin-bottom:28px;">Sign in</div>
+</div>
+""", unsafe_allow_html=True)
+
+        _uname = st.text_input("Username", placeholder="Enter username", key="login_uname")
+        _pwd   = st.text_input("Password", placeholder="Enter password", type="password", key="login_pwd")
+
+        if st.session_state["_login_failed"]:
+            st.markdown('<p style="color:#dc2626;font-size:12px;">⚠ Invalid credentials. Try again.</p>', unsafe_allow_html=True)
+
+        _do_login = st.button("Sign in →", key="login_btn", use_container_width=True, type="primary")
+
+        st.markdown("""
+<div style="background:#f8fafc;border:0.5px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-top:14px;text-align:center;">
+  <div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Demo credentials</div>
+  <div style="font-size:13px;color:#0a2240;font-weight:500;">Username: <b>admin</b></div>
+  <div style="font-size:13px;color:#0a2240;font-weight:500;">Password: <b>nirnay2026</b></div>
+</div>
+<div style="font-size:10px;color:#94a3b8;text-align:center;margin-top:14px;line-height:1.6;">
+  Authorised CDSCO personnel only.<br>All sessions are logged for compliance.
 </div>
 """, unsafe_allow_html=True)
 
