@@ -346,7 +346,6 @@ with t_anon:
     st.text_area("Document content", height=200,
                  placeholder="Paste SAE report, clinical trial document, or any regulatory text with PII/PHI...",
                  key="anon_textarea")
-    st.session_state["anon_text"] = st.session_state.get("anon_textarea","")
     st.markdown('</div>', unsafe_allow_html=True)
 
     c1, c2, _ = st.columns([1,1,3])
@@ -357,7 +356,7 @@ with t_anon:
             st.rerun()
 
     if run_anon:
-        content = st.session_state["anon_text"].strip()
+        content = (st.session_state.get("anon_text") or st.session_state.get("anon_textarea","")).strip()
         if not content:
             st.markdown('<div class="rc warn">⚠️ Please upload a file or paste text first.</div>', unsafe_allow_html=True)
         else:
@@ -459,7 +458,6 @@ with t_sum:
 
     st.markdown('<div class="or-line">or paste text manually</div>', unsafe_allow_html=True)
     st.text_area("Document content", height=200, placeholder="Paste content here...", key="sum_ta")
-    st.session_state["sum_text"] = st.session_state.get("sum_ta","")
     st.markdown('</div>', unsafe_allow_html=True)
 
     c1, c2, _ = st.columns([1,1,3])
@@ -470,7 +468,7 @@ with t_sum:
             st.rerun()
 
     if run_sum:
-        content = st.session_state["sum_text"].strip()
+        content = (st.session_state.get("sum_text") or st.session_state.get("sum_ta","")).strip()
         if not content:
             st.markdown('<div class="rc warn">Please upload or paste content first.</div>', unsafe_allow_html=True)
         else:
@@ -562,7 +560,6 @@ with t_comp:
         st.markdown('<div class="or-line">or paste text manually</div>', unsafe_allow_html=True)
         st.text_area("Application content", height=180,
                      placeholder="Paste SUGAM application or checklist content...", key="comp_ta")
-        st.session_state["comp_text"] = st.session_state.get("comp_ta","")
         st.markdown('</div>', unsafe_allow_html=True)
     with col_b:
         app_id = st.text_input("Application ID", placeholder="SUGAM-CT-2024-0892")
@@ -570,7 +567,7 @@ with t_comp:
         run_comp = st.button("✅ Check Completeness", type="primary", use_container_width=True)
 
     if run_comp:
-        content = st.session_state["comp_text"].strip()
+        content = (st.session_state.get("comp_text") or st.session_state.get("comp_ta","")).strip()
         if not content:
             st.markdown('<div class="rc warn">Please upload or paste content first.</div>', unsafe_allow_html=True)
         else:
@@ -657,7 +654,6 @@ Files are cleared on browser refresh — DPDP compliant (no external storage).</
             st.success(f"✓ Loaded: {cls_file.name}")
     st.markdown('<div class="or-line">or paste text</div>', unsafe_allow_html=True)
     st.text_area("SAE report content", height=160, key="class_ta")
-    st.session_state["class_text"] = st.session_state.get("class_ta","")
     st.markdown('</div>', unsafe_allow_html=True)
 
     with st.expander("+ Add more SAE reports for duplicate detection", expanded=False):
@@ -679,7 +675,7 @@ Files are cleared on browser refresh — DPDP compliant (no external storage).</
     with c1: run_cls = st.button("🏷️ Classify & Check Duplicates", type="primary", use_container_width=True)
 
     if run_cls:
-        content = st.session_state["class_text"].strip()
+        content = (st.session_state.get("class_text") or st.session_state.get("class_ta","")).strip()
         if not content:
             st.markdown('<div class="rc warn">Please upload or paste an SAE report first.</div>', unsafe_allow_html=True)
         else:
@@ -743,7 +739,6 @@ with t_cmp:
                 st.session_state["v1_text"] = st.session_state["v1ta"] = t
                 st.success(f"✓ {v1f.name}")
         st.text_area("or paste V1", height=200, key="v1ta", placeholder="Original document...")
-        st.session_state["v1_text"] = st.session_state.get("v1ta","")
     with cv2:
         st.markdown("**Version 2 — Updated**")
         v2f = st.file_uploader("Upload V2", type=["docx","pdf","txt"], key="v2f")
@@ -753,14 +748,13 @@ with t_cmp:
                 st.session_state["v2_text"] = st.session_state["v2ta"] = t
                 st.success(f"✓ {v2f.name}")
         st.text_area("or paste V2", height=200, key="v2ta", placeholder="Updated document...")
-        st.session_state["v2_text"] = st.session_state.get("v2ta","")
 
     c1, _, _ = st.columns([1,1,3])
     with c1: run_cmp = st.button("🔍 Compare Documents", type="primary", use_container_width=True)
 
     if run_cmp:
-        t1c = st.session_state["v1_text"].strip()
-        t2c = st.session_state["v2_text"].strip()
+        t1c = (st.session_state.get("v1_text") or st.session_state.get("v1ta","")).strip()
+        t2c = (st.session_state.get("v2_text") or st.session_state.get("v2ta","")).strip()
         if not t1c or not t2c:
             st.markdown('<div class="rc warn">Please provide both document versions.</div>', unsafe_allow_html=True)
         else:
