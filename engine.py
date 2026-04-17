@@ -17,7 +17,9 @@ from __future__ import annotations
 import datetime
 import difflib
 import io
+import importlib
 import re
+import sys
 
 import pandas as pd
 
@@ -27,16 +29,6 @@ try:
     DOCX_OK = True
 except ImportError:
     DOCX_OK = False
-
-try:
-    from pypdf import PdfReader
-    PDF_OK: bool | str = True
-except ImportError:
-    try:
-        import PyPDF2
-        PDF_OK = "pypdf2"
-    except ImportError:
-        PDF_OK = False
 
 # ── Optional Claude API ───────────────────────────────────────────────────────
 try:
@@ -54,6 +46,23 @@ CLAUDE_MODEL = "claude-haiku-4-5-20251001"  # free-tier compatible
 # FILE EXTRACTION
 # ═══════════════════════════════════════════════════════════════════════════════
 
+def _resolve_pdf_reader():
+    """Resolve an available PDF reader at call time to avoid stale import state."""
+    errors: list[str] = []
+    for module_name in ("pypdf", "PyPDF2"):
+        try:
+            module = importlib.import_module(module_name)
+            return module.PdfReader, module_name, None
+        except Exception as exc:  # pragma: no cover - depends on local env
+            errors.append(f"{module_name}: {exc}")
+
+    detail = "; ".join(errors) if errors else "No PDF parser module found."
+    return None, None, (
+        "PDF support is unavailable in the active Streamlit environment. "
+        f"Install `pypdf` or `PyPDF2` for `{sys.executable}` and restart the app. "
+        f"Details: {detail}"
+    )
+
 def extract_text(uploaded_file) -> tuple[str, str | None]:
     """Returns (text, error_or_None). Handles PDF, DOCX, TXT."""
     if uploaded_file is None:
@@ -70,14 +79,18 @@ def extract_text(uploaded_file) -> tuple[str, str | None]:
             doc = python_docx.Document(io.BytesIO(raw))
             return "\n".join(p.text for p in doc.paragraphs if p.text.strip()), None
         elif name.endswith(".pdf"):
-            if not PDF_OK:
-                return "", "Install pypdf: add to requirements.txt"
-            if PDF_OK == "pypdf2":
-                import PyPDF2
-                r = PyPDF2.PdfReader(io.BytesIO(raw))
-                return "\n".join(pg.extract_text() or "" for pg in r.pages), None
-            r = PdfReader(io.BytesIO(raw))
-            return "\n".join(pg.extract_text() or "" for pg in r.pages), None
+            reader_cls, reader_name, reader_error = _resolve_pdf_reader()
+            if reader_error:
+                return "", reader_error
+
+            reader = reader_cls(io.BytesIO(raw))
+            extracted = "\n".join(page.extract_text() or "" for page in reader.pages).strip()
+            if not extracted:
+                return "", (
+                    f"No extractable text found in {uploaded_file.name}. "
+                    f"The PDF may be scanned/image-only or unsupported by {reader_name}."
+                )
+            return extracted, None
         elif name.endswith(".txt"):
             return raw.decode("utf-8", errors="ignore"), None
         return "", f"Unsupported file type: {uploaded_file.name}"
