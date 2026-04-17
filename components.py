@@ -173,6 +173,23 @@ section[data-testid="stSidebar"]{display:none!important;}
 [data-testid="stDataFrame"] tbody tr {
   border-bottom: 1px solid #e2e8f0 !important;
 }
+/* Consolidated Header Box */
+[data-testid="stHorizontalBlock"]:has(button[key="signout"]) {
+  background-color: white !important;
+  border-radius: 12px !important;
+  padding: 12px 22px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+  align-items: center !important;
+}
+
+/* Ensure Logo inside the box doesn't have its own box styling if reused */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -190,10 +207,9 @@ def init_state() -> None:
     if "active_case" not in st.session_state:
         st.session_state.active_case = deepcopy(
             st.session_state.demo_cases[st.session_state.active_case_key])
-    if "screen" not in st.session_state:
-        st.session_state.screen = SCREENS[0]
-    if "compare_filter" not in st.session_state:
-        st.session_state.compare_filter = "All changes"
+    if "screen"                not in st.session_state: st.session_state.screen = SCREENS[0]
+    if "active_ribbon_tab"      not in st.session_state: st.session_state.active_ribbon_tab = "🖥️ Command Dashboard"
+    if "compare_filter"        not in st.session_state: st.session_state.compare_filter = "All changes"
     # Feature tab state
     for k in ["anon_text","sum_text","comp_text","class_text","v1_text","v2_text",
               "anon_textarea","sum_ta","comp_ta","class_ta","v1ta","v2ta"]:
@@ -220,6 +236,32 @@ def set_active_case(case_key: str) -> None:
 
 def set_screen(screen: str) -> None:
     st.session_state.screen = screen
+    # Map screens to ribbon tabs for automatic JS routing
+    mapping = {
+        "Command Dashboard": 0,
+        "Document Intake":   1,
+        "Protected View":    2,
+        "Summarisation":     3,
+        "Completeness":      4,
+        "Categorisation":    5,
+        "Version Compare":   6,
+        "SAE Review":        7,
+        "Audit Trail":       8
+    }
+    if screen in mapping:
+        st.session_state.active_tab = mapping[screen]
+    
+    # Also update the display name for UI if needed
+    name_mapping = {
+        "Command Dashboard": "🖥️ Command Dashboard",
+        "Document Intake":   "📥 Document Intake",
+        "Protected View":    "🕵️ Anonymisation",
+        "SAE Review":        "🏥 SAE Review",
+        "Version Compare":   "🔄 Version Compare",
+        "Audit Trail":       "📜 Audit Trail"
+    }
+    if screen in name_mapping:
+        st.session_state.active_ribbon_tab = name_mapping[screen]
 
 
 def timestamp() -> str:
@@ -269,7 +311,7 @@ def audit_dataframe(case: dict) -> pd.DataFrame:
 # WORKFLOW ACTION HELPERS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def run_classification() -> None:
+def run_categorisation() -> None:
     case     = get_active_case()
     document = case["documents"][case["selected_document_id"]]
     if "classification" not in document:
@@ -404,36 +446,9 @@ def render_banner(title: str, subtitle: str) -> None:
 
 
 def render_top_nav() -> str:
-    """Render top-of-page workflow controls now that the sidebar is removed."""
-    with st.container(border=True):
-        nav1, nav2, nav3 = st.columns([2.4, 2.0, 1.2])
-
-        with nav1:
-            case_key = st.selectbox(
-                "Active sample packet",
-                options=list(st.session_state.demo_cases.keys()),
-                index=list(st.session_state.demo_cases.keys()).index(st.session_state.active_case_key),
-                format_func=lambda k: st.session_state.demo_cases[k]["title"],
-                key="top_case_selector",
-            )
-            if case_key != st.session_state.active_case_key:
-                set_active_case(case_key)
-
-        with nav2:
-            screen = st.selectbox(
-                "Review workflow",
-                options=SCREENS,
-                index=SCREENS.index(st.session_state.screen),
-                key="top_screen_selector",
-            )
-            st.session_state.screen = screen
-
-        with nav3:
-            case = get_active_case()
-            st.markdown("**Current packet**")
-            st.caption(case["packet_id"])
-            st.caption(f"Stage: {case['current_stage']}")
+    """Return the current screen name; UI elements for packet/workflow selection removed per user request."""
     return st.session_state.get("screen", SCREENS[0])
+
 
 
 def render_sidebar() -> str:
