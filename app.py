@@ -310,6 +310,62 @@ def _preview_text(text: str, limit: int = 180) -> str:
     return compact[: limit - 1].rstrip() + "…"
 
 
+def _build_spreadsheet_synopsis(name: str, text: str, duplicate_warning: str) -> tuple[dict, dict, float]:
+    sections: list[tuple[str, list[str]]] = []
+    current_sheet = "Sheet1"
+    current_lines: list[str] = []
+    for raw_line in text.splitlines():
+        line = raw_line.rstrip()
+        sheet_match = re.match(r"^\[Sheet:\s*(.+?)\]\s*$", line)
+        if sheet_match:
+            if current_lines:
+                sections.append((current_sheet, [item for item in current_lines if item.strip()]))
+            current_sheet = sheet_match.group(1)
+            current_lines = []
+            continue
+        if line.strip():
+            current_lines.append(line)
+    if current_lines or not sections:
+        sections.append((current_sheet, [item for item in current_lines if item.strip()]))
+
+    non_empty_sections = [(sheet, lines) for sheet, lines in sections if lines]
+    section_rows = [max(0, len(lines) - 1) for _, lines in non_empty_sections]
+    total_rows = sum(section_rows)
+    sheet_names = [sheet for sheet, _ in non_empty_sections] or [current_sheet]
+
+    first_sheet_lines = non_empty_sections[0][1] if non_empty_sections else []
+    header_line = first_sheet_lines[0].strip() if first_sheet_lines else ""
+    header_guess = [part.strip() for part in re.split(r"\s{2,}", header_line) if part.strip()]
+    if len(header_guess) <= 1 and header_line:
+        header_guess = header_line.split()[:4]
+    header_preview = ", ".join(header_guess[:4]) if header_guess else "Headers not clearly inferred from extracted workbook text"
+
+    summary_bits = [f"Workbook with {len(sheet_names)} visible sheet(s)"]
+    if total_rows:
+        summary_bits.append(f"approximately {total_rows} data row(s)")
+    if header_guess:
+        summary_bits.append(f"primary columns include {header_preview}")
+    summary = ". ".join(summary_bits) + "."
+
+    classification = {
+        "probable_type": "Spreadsheet Intake Register",
+        "severity": "Medium",
+        "duplicate_warning": duplicate_warning,
+        "escalation_recommendation": "Reviewer should confirm the spreadsheet category and route it to the relevant workflow.",
+    }
+    synopsis = {
+        "headline": f"Spreadsheet uploaded for intake review: {name}",
+        "summary": summary,
+        "key_signals": [
+            f"Sheets: {', '.join(sheet_names[:3])}" + ("…" if len(sheet_names) > 3 else ""),
+            f"Approximate data rows: {total_rows or len(first_sheet_lines)}",
+            f"Primary columns: {header_preview}",
+        ],
+        "reviewer_prompt": "Review the sheet structure and key columns before deciding whether this workbook belongs in SAE, completeness, or comparison review.",
+    }
+    return classification, synopsis, 0.82
+
+
 def _build_uploaded_intake_artifacts(name: str, text: str, documents: dict, doc_id: str) -> tuple[dict, dict, float]:
     tl = text.lower()
     sibling_docs = {
@@ -422,6 +478,9 @@ def _build_uploaded_intake_artifacts(name: str, text: str, documents: dict, doc_
             "reviewer_prompt": "Link the uploaded amendment to its baseline version before final routing.",
         }
         return classification, synopsis, 0.84
+
+    if name.lower().endswith((".csv", ".xlsx", ".xls")):
+        return _build_spreadsheet_synopsis(name, text, duplicate_warning)
 
     classification = {
         "probable_type": "General Regulatory Document",
